@@ -1,3 +1,9 @@
+/*
+Code developed by: http://eltoro.it - May 1, 2016
+Twitter: https://twitter.com/ElToroIT
+LinkedIn: https://www.linkedin.com/in/eltoroit
+Repository: https://github.com/eltoroit/ETLC_SecureDB
+*/
 public with sharing class ETLC_SecuredDB {
 	public enum Operation {Creating, Reading, Updating, Deleting, Upserting}
 
