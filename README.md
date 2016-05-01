@@ -1,5 +1,4 @@
 # ETLC_SecureDB
-## Lightning Components Secured Data Access Helper
 
 ## Synopsis
 
