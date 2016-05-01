@@ -68,4 +68,4 @@ ElToroIT [Twitter](https://twitter.com/ElToroIT) [LinkedIn](https://www.linkedin
 I love helping developers understand Salesforce and how easy is to work with this great platform. I also teach the Salesforce developer courses in English and Spanish.
 
 
-Don't forget to visit my [Blog: http://eltoro.it](http://eltoro.it) 
+Don't forget to visit my blog: [http://eltoro.it](http://eltoro.it) 
