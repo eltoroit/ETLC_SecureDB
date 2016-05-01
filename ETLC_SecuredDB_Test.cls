@@ -1,7 +1,14 @@
-// Fields being used:
-// Account (Id, Name, Website)
-// Contact (Id, Name, LastName, AssistantName, AccountId)
-// Task (Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId)
+/*
+Code developed by: http://eltoro.it - May 1, 2016
+Twitter: https://twitter.com/ElToroIT
+LinkedIn: https://www.linkedin.com/in/eltoroit
+Repository: https://github.com/eltoroit/ETLC_SecureDB
+
+This test uses these standard fields
+- Account (Id, Name, Website)
+- Contact (Id, Name, LastName, AssistantName, AccountId)
+- Task (Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId)
+*/
 @isTest(SeeAllData=false)
 public class ETLC_SecuredDB_Test {
     @TestSetup
