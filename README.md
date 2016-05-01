@@ -21,7 +21,7 @@ Copy the Apex classes (*ETLC_SecuredDB*, *ETLC_SecuredDB_Test*, *ETLC_Exception*
 ### ETLC_SecuredDB
 This Apex class helps you make secured queries and DML operations enforcing the user's CRUD, FLS and Record Access security. It has these public methods:
 
-**public static List<sObject> query(String SOQL)**
+**public static List&lt;sObject&gt; query(String SOQL)**
 This method allows you to pass a SOQL string, which will be executed following the user’s  CRUD, FLS and Record Access security. This method uses Dynamic SOQL to fetch the data. If the security is violated, it will throw an exception.
 
 **public static void validateQuery(sObject dbRecord)**
@@ -30,7 +30,7 @@ This method checks if the current user’s CRUD, FLS and Record Access security 
 **public static void validateQuery(List<sObject> dbRecords)**
 This method is similar to the previous method, but works with a list of records. If the security is violated, it will throw an exception.
 
-**public static void performDML(Operation op, List<sObject> dbRecords)**
+**public static void performDML(Operation op, List&lt;sObject&gt; dbRecords)**
 This method performs the desired DML operation after it has checked that the user’s CRUD, FLS and Record Access security will allow him/her to perform such operation. If the security is violated, it will throw an exception.
 
 #### Additional Notes:
