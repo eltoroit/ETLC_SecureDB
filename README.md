@@ -14,7 +14,11 @@ Therefore you must explicitly check for CRUD and FLS when performing any databas
 
 ## Installation
 
-Copy the Apex classes (*ETLC_SecuredDB*, *ETLC_SecuredDB_Test*, *ETLC_Exception*) to your ORG.
+Copy the Apex classes (*ETLC_SecuredDB*, *ETLC_SecuredDB_Test*, *ETLC_Exception*) to your ORG, which can be done automatically with this button:
+
+<a href="https://githubsfdeploy.herokuapp.com?owner=ElToroIT&repo=ETLC_SecureDB">
+  <img alt="Deploy to Salesforce" src="https://raw.githubusercontent.com/afawcett/githubsfdeploy/master/deploy.png">
+</a>
 
 ## API Reference
 
