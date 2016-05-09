@@ -24,8 +24,8 @@ public class ETLC_SecuredDB_Test {
         insert t;
         
         c = [SELECT Id, Name, LastName, AssistantName, 
-              AccountId, Account.Name, Account.Website,
-              (SELECT Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId, Account.Name FROM tasks) FROM Contact];
+             AccountId, Account.Name, Account.Website,
+             (SELECT Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId, Account.Name FROM tasks) FROM Contact];
         System.debug('Contact created: ' + c);
         System.debug('Task created: ' + c.tasks);
     }
@@ -36,7 +36,7 @@ public class ETLC_SecuredDB_Test {
         Contact c = [SELECT Id, Name, LastName, AssistantName, AccountId FROM Contact LIMIT 1];
         ETLC_SecuredDB.validateQuery(c);
     }
-
+    
     @isTest
     private static void ValidateQuery2() {
         System.debug('ValidateQuery2:');
@@ -156,7 +156,7 @@ public class ETLC_SecuredDB_Test {
     @isTest
     private static void Upserting() {
         System.debug('Upserting:');
-		Contact c = [SELECT ID, AccountID FROM Contact LIMIT 1];
+        Contact c = [SELECT ID, AccountID FROM Contact LIMIT 1];
         
         List<Task> Tasks = new List<Task>();
         for (Integer i = 0; i < 10; i++) {
@@ -213,46 +213,50 @@ public class ETLC_SecuredDB_Test {
             System.assert(false, 'Exception thrown but not the expected one');
         }
     }
-
-	@isTest
-	private static void QueryFailSecurity_1() {
-		System.debug('QueryFailSecurity_1: Fails security');
-
+    
+    @isTest
+    private static void QueryFailSecurity_1() {
+        System.debug('QueryFailSecurity_1: Fails security');
+        
         // Find a user
         // TODO: Change this criteria to find a user without FLS access on a task field (description)
-		String userCriteria = '';
-        userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
-        User u = Database.query('SELECT ID, FirstName, LastName, email FROM User ' + userCriteria + ' LIMIT 1');
-        
-        // Build SOQL
-        // TODO: Write a query that uses a task field (description) which is not accessible by the user found above.
-        String SOQL = 'SELECT Id, description FROM Task LIMIT 5';
-        
-        // Make sure user has record access to the contact, so that he can see the task
-        // TODO: Comment out if Contact is NOT defined with OWD private
-        List<ContactShare> contactShares = new List<ContactShare>();
-        for (Contact contactTofind : [SELECT ID FROM Contact]) {
-            ContactShare cs = new ContactShare();
-            cs.ContactAccessLevel = 'READ';
-            cs.ContactId = contactToFind.id;
-            cs.UserOrGroupId = u.id;
-            contactShares.add(cs);
-        }
-        insert contactShares;
-        
-        // Execute query as restricted user
-        System.runAs(u) {
-            System.debug('FINDME');
-            try {
-                ETLC_SecuredDB.query(SOQL);
-                System.assert(false, 'Should have failed with Security exception');
-            } catch (ETLC_Exception ex1) {
-                // TODO: If you are checking other field, change the message
-                String expectedMsg = 'FLS on [Task.Description] for [Reading]';
-                System.assertEquals(expectedMsg, ex1.getMessage(), 'Not the expected exception message');
-            } catch (Exception ex2) {
-                System.assert(false, 'Exception thrown but not the expected one');
-            } 
+        try {
+            String userCriteria = '';
+            userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
+            User u = Database.query('SELECT ID, FirstName, LastName, email FROM User ' + userCriteria + ' LIMIT 1');
+            
+            // Build SOQL
+            // TODO: Write a query that uses a task field (description) which is not accessible by the user found above.
+            String SOQL = 'SELECT Id, description FROM Task LIMIT 5';
+            
+            // Make sure user has record access to the contact, so that he can see the task
+            // TODO: Comment out if Contact is NOT defined with OWD private
+            List<ContactShare> contactShares = new List<ContactShare>();
+            for (Contact contactTofind : [SELECT ID FROM Contact]) {
+                ContactShare cs = new ContactShare();
+                cs.ContactAccessLevel = 'READ';
+                cs.ContactId = contactToFind.id;
+                cs.UserOrGroupId = u.id;
+                contactShares.add(cs);
+            }
+            insert contactShares;
+            
+            // Execute query as restricted user
+            System.runAs(u) {
+                System.debug('FINDME');
+                try {
+                    ETLC_SecuredDB.query(SOQL);
+                    System.assert(false, 'Should have failed with Security exception');
+                } catch (ETLC_Exception ex1) {
+                    // TODO: If you are checking other field, change the message
+                    String expectedMsg = 'FLS on [Task.Description] for [Reading]';
+                    System.assertEquals(expectedMsg, ex1.getMessage(), 'Not the expected exception message');
+                } catch (Exception ex2) {
+                    System.assert(false, 'Exception thrown but not the expected one');
+                } 
+            }
+        } catch (Exception ex) {
+            System.debug(ex);
         }
     }
     
