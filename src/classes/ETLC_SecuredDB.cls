@@ -5,7 +5,7 @@ LinkedIn: https://www.linkedin.com/in/eltoroit
 Repository: https://github.com/eltoroit/ETLC_SecureDB
 */
 public with sharing class ETLC_SecuredDB {
-	public enum Operation {Creating, Reading, Updating, Deleting, Upserting}
+	public enum Operation {Querying, Inserting, Updating, Deleting, Upserting}
 
 	public static List<sObject> query(String SOQL) {
 		// First query... 
@@ -17,7 +17,7 @@ public with sharing class ETLC_SecuredDB {
 		// -- Why bother checking security if there are no fields returned
 		// -- Simple to make it work for SOSL too (same ideas)
 		// -- Do you really need more reasons?
-		validate(Operation.Reading, findFields(dbRecords));
+		validate(Operation.Querying, findFields(dbRecords));
 		return dbRecords;
 	} 
     public static void validateQuery(sObject dbRecord) {
@@ -26,15 +26,20 @@ public with sharing class ETLC_SecuredDB {
         validateQuery(dbRecords);
     }
     public static void validateQuery(List<sObject> dbRecords) {
-        validate(Operation.Reading, findFields(dbRecords));
+        validate(Operation.Querying, findFields(dbRecords));
+    }
+    public static void performDML(Operation op, sObject dbRecord) {
+        List<sObject> dbRecords = new List<sObject>();
+        dbRecords.add(dbRecord);
+        performDML(op, dbRecords);
     }
     public static void performDML(Operation op, List<sObject> dbRecords) {
 		// First check for security...
 		validate(op, findFields(dbRecords));
 		// Then perform DML operation...
 		Integer counterDMLBefore = Limits.getDMLStatements();
-		if (op == Operation.Creating) insert dbRecords;
-		if (op == Operation.Reading)  throw new ETLC_Exception('I thought you were doing a DML');
+		if (op == Operation.Inserting) insert dbRecords;
+		if (op == Operation.Querying)  throw new ETLC_Exception('I thought you were doing a DML');
 		if (op == Operation.Updating) update dbRecords;
 		if (op == Operation.Deleting) delete dbRecords;
 		if (op == Operation.Upserting) upsert dbRecords;
@@ -54,9 +59,9 @@ public with sharing class ETLC_SecuredDB {
             securityMessage = 'CRUD on [' + sObjectName + '] for [' + op + ']';
 			System.debug('Checking: ' + securityMessage);
 			Schema.DescribeSObjectResult drSObj = mapObjects.get(sObjectName).getDescribe();
-			if (op == Operation.Creating) {
+			if (op == Operation.Inserting) {
 				if (!drSObj.isCreateable()) throwSecurityException(securityMessage);
-			} else if (op == Operation.Reading) {
+			} else if (op == Operation.Querying) {
 				if (!drSObj.isAccessible()) throwSecurityException(securityMessage);
 			} else if (op == Operation.Updating) {
 				if (!drSObj.isUpdateable()) throwSecurityException(securityMessage);
@@ -77,9 +82,9 @@ public with sharing class ETLC_SecuredDB {
 					if (drField.isPermissionable()) {
                         securityMessage = 'FLS on [' + sObjectName + '.' + fieldName + '] for [' + op + ']';
 						System.debug('Checking: ' + securityMessage);
-						if (op == Operation.Creating) {
+						if (op == Operation.Inserting) {
 							if (!drField.isCreateable()) throwSecurityException(securityMessage);
-						} else if (op == Operation.Reading) {
+						} else if (op == Operation.Querying) {
 							if (!drField.isAccessible()) throwSecurityException(securityMessage);
 						} else if (op == Operation.Updating) {
 							if (!drField.isUpdateable()) throwSecurityException(securityMessage);
