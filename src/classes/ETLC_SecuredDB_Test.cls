@@ -10,7 +10,7 @@ This test uses these standard fields
 - Task (Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId)
 */
 @isTest(SeeAllData=false)
-private class ETLC_SecuredDB_Test {
+public class ETLC_SecuredDB_Test {
     @TestSetup
     private static void BuildObjects() {
         System.debug('BuildObjects:');
