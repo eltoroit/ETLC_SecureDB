@@ -211,7 +211,10 @@ public class ETLC_SecuredDB_Test {
     }
     
 <<<<<<< HEAD
+<<<<<<< HEAD
     /*
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
     @isTest
@@ -222,7 +225,12 @@ public class ETLC_SecuredDB_Test {
         // TODO: Change this criteria to find a user without FLS access on a task field (description)
         try {
 <<<<<<< HEAD
+<<<<<<< HEAD
             String userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
+=======
+            String userCriteria = '';
+            userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
+>>>>>>> origin/master
 =======
             String userCriteria = '';
             userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
@@ -248,6 +256,10 @@ public class ETLC_SecuredDB_Test {
             // Execute query as restricted user
             System.runAs(u) {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+                System.debug('FINDME');
+>>>>>>> origin/master
 =======
                 System.debug('FINDME');
 >>>>>>> origin/master
