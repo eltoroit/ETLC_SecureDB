@@ -10,7 +10,7 @@ This test uses these standard fields
 - Task (Id, Subject, Description, ActivityDate, Priority, Status, WhatId, WhoId, AccountId)
 */
 @isTest(SeeAllData=false)
-public class ETLC_SecuredDB_Test {
+private class ETLC_SecuredDB_Test {
     @TestSetup
     private static void BuildObjects() {
         System.debug('BuildObjects:');
@@ -210,13 +210,7 @@ public class ETLC_SecuredDB_Test {
         }
     }
     
-<<<<<<< HEAD
-<<<<<<< HEAD
     /*
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
     @isTest
     private static void QueryFailSecurity_1() {
         System.debug('QueryFailSecurity_1: Fails security');
@@ -224,17 +218,7 @@ public class ETLC_SecuredDB_Test {
         // Find a user
         // TODO: Change this criteria to find a user without FLS access on a task field (description)
         try {
-<<<<<<< HEAD
-<<<<<<< HEAD
             String userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
-=======
-            String userCriteria = '';
-            userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
->>>>>>> origin/master
-=======
-            String userCriteria = '';
-            userCriteria = 'WHERE CommunityNickname = \'ElToro\'';
->>>>>>> origin/master
             User u = Database.query('SELECT ID, FirstName, LastName, email FROM User ' + userCriteria + ' LIMIT 1');
             
             // Build SOQL
@@ -255,14 +239,6 @@ public class ETLC_SecuredDB_Test {
             
             // Execute query as restricted user
             System.runAs(u) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-                System.debug('FINDME');
->>>>>>> origin/master
-=======
-                System.debug('FINDME');
->>>>>>> origin/master
                 try {
                     ETLC_SecuredDB.query(SOQL);
                     System.assert(false, 'Should have failed with Security exception');
