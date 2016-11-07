@@ -34,8 +34,32 @@ This method checks if the current user’s CRUD, FLS and Record Access security 
 **public static void validateQuery(List<sObject> dbRecords)**
 This method is similar to the previous method, but works with a list of records. If the security is violated, it will throw an exception.
 
-**public static void performDML(Operation op, List&lt;sObject&gt; dbRecords)**
+**public static void performDML(Operation op, sObject dbRecord)**
 This method performs the desired DML operation after it has checked that the user’s CRUD, FLS and Record Access security will allow him/her to perform such operation. If the security is violated, it will throw an exception.
+
+**public static void performDML(Operation op, List&lt;sObject&gt; dbRecords)**
+This method is similar to the previous method, but works with a list of records. If the security is violated, it will throw an exception.
+
+**public static String getFieldsForPlainValidator(sObject dbRecord)**
+Returns a string representing the object/fields structure for this record. It's used to make the code more efficiently by not having to perform the whole check every time. 
+
+**public static String getFieldsForPlainValidator(List&lt;sObject&gt; dbRecords)**
+This method is similar to the previous method, but works with a list of records. 
+
+**public static void plainValidator(Operation op, String sObjName, Set&lt;String&gt; fieldNames)**
+This method performs a security check on the object and set of field names passed, but does not perform a full scan of the data. 
+
+**public static void plainValidator(Operation op, String fields)**
+This method performs a security check on the string passed, but does not perform a full scan of the data. The string can be built by calling the *getFieldsForPlainValidator()* method
+
+#Flags
+There are 2 static flags that can help configure the way the code works.
+
+**public static Boolean showDebugMessages = false**
+This controls the output of debug log messages to the debug log. The default value is not to log anything.
+
+**public static Boolean findFieldsUsingJSON = false**
+View [Issue #1](https://github.com/eltoroit/ETLC_SecureDB/issues/1) where @afawcett suggests to use the Apex native method SObject.getPopulatedFieldsAsMap() rather than the JSON methods to find the different objects/fields. I have done some tests but I am not sure which one is better, so I have left both of them with this flag that can toggle the behaviour. the default log is not using JSON.
 
 #### Additional Notes:
 
@@ -60,6 +84,7 @@ I have also included one method (**private static void QueryFailSecurity_1() **)
 
 | Version | Description |
 | --- | --- |
+| 2.0 | Added performance improvements |
 | 1.0 | First code release |
 
 ## License
