@@ -52,7 +52,7 @@ This method performs a security check on the object and set of field names passe
 **public static void plainValidator(Operation op, String fields)**
 This method performs a security check on the string passed, but does not perform a full scan of the data. The string can be built by calling the *getFieldsForPlainValidator()* method
 
-#Flags
+####Flags
 There are 2 static flags that can help configure the way the code works.
 
 **public static Boolean showDebugMessages = false**
