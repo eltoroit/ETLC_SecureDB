@@ -4,6 +4,8 @@
 
 This Apex class will help you ensure the Lightning components applications/components that you write to access data from Salesforce are always enforcing the user's CRUD, FLS and Record Access (Sharing model) security.
 
+**NOTE:** This repository was updated and included in ETLC_ApexBridge. The full documentation can be found there.
+
 ## Motivation
 
 As indicated in the official [Lightning Security](https://developer.salesforce.com/page/Lightning_Security) article:
@@ -84,6 +86,7 @@ I have also included one method (**private static void QueryFailSecurity_1() **)
 
 | Version | Description |
 | --- | --- |
+| 2.1 | Fixed some perfomance issues |
 | 2.0 | Added performance improvements |
 | 1.0 | First code release |
 

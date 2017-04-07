@@ -78,7 +78,7 @@ public with sharing class ETLC_SecuredDB {
     }
     
     // Provide a record (list of records) and perform the operation desired.
-    // For updates, you must pass a list of records
+    // For upserts, you must pass a list of records
     public static void performDML(Operation op, sObject dbRecord) {
         if (op == Operation.upserting) {
             throw new ETLC_Exception('When upserting records, you must pass a list of records');
@@ -88,6 +88,15 @@ public with sharing class ETLC_SecuredDB {
         performDML(op, dbRecords);
     }
     public static void performDML(Operation op, List<sObject> dbRecords) {
+        if (showDebugMessages) {
+            Set<String> sObjNames = new Set<String>();
+            for (sObject dbRecord : dbRecords) {
+                String sObjName = dbRecord.getsObjectType().getDescribe().getName();
+                if (!sObjNames.contains(sObjName)) sObjNames.add(sObjName);
+            }
+            System.debug(op + ' on ' + sObjNames);
+        }
+        
         // First check for security...
         validate(op, findFields(dbRecords));
         // Then perform DML operation...
@@ -97,9 +106,7 @@ public with sharing class ETLC_SecuredDB {
         if (op == Operation.Updating) update dbRecords;
         if (op == Operation.Deleting) delete dbRecords;
         if (op == Operation.Upserting) upsert dbRecords;
-        if (counterDMLBefore+1 != Limits.getDMLStatements()) {
-            throw new ETLC_Exception('Which DML Did you perform?');
-        }
+        if (counterDMLBefore+1 != Limits.getDMLStatements()) throw new ETLC_Exception('Which DML Did you perform?');
     }
     
     // Obtain a string representing the objects and fields that you can use to validate security
@@ -114,14 +121,17 @@ public with sharing class ETLC_SecuredDB {
     }
     
     // Throws System.NoAccessException if there are Security failures.
+    public static void plainValidator(Operation op, String fieldsJSON) {
+        Map<String, Set<String>> mapFieldNames;
+        mapFieldNames = (Map<String, Set<String>>) JSON.deserialize(fieldsJSON, Map<String, Set<String>>.class);
+        plainValidator(op, mapFieldNames);
+    }
     public static void plainValidator(Operation op, String sObjName, Set<String> fieldNames) {
         Map<String, Set<String>> mapFieldNames = new Map<String, Set<String>>();
         mapFieldNames.put(sObjName, fieldNames);
-        validate(op, mapFieldNames);
+        plainValidator(op, mapFieldNames);
     }
-    public static void plainValidator(Operation op, String fields) {
-        Map<String, Set<String>> mapFieldNames;
-        mapFieldNames = (Map<String, Set<String>>) JSON.deserialize(fields, Map<String, Set<String>>.class);
+    public static void plainValidator(Operation op, Map<String, Set<String>> mapFieldNames) {
         validate(op, mapFieldNames);
     }
     
@@ -134,15 +144,15 @@ public with sharing class ETLC_SecuredDB {
             if (showDebugMessages) {
                 System.debug('Checking: ' + securityMessage);
             }
-
+            
             // Does Object exist?
             Schema.DescribeSObjectResult drSObj;
             try {
-				drSObj = mapObjects.get(sObjectName).getDescribe();
-        	} catch (Exception ex){
-            	throw new ETLC_Exception('Invalid Object name [' + sObjectName + ']');
-        	}
-
+                drSObj = mapObjects.get(sObjectName).getDescribe();
+            } catch (Exception ex){
+                throw new ETLC_Exception('Invalid Object name [' + sObjectName + ']');
+            }
+            
             if (op == Operation.Inserting) {
                 if (!drSObj.isCreateable()) throwSecurityException(securityMessage);
             } else if (op == Operation.Querying) {
@@ -182,8 +192,6 @@ public with sharing class ETLC_SecuredDB {
                             if (!drField.isAccessible()) throwSecurityException(securityMessage);
                         } else if (op == Operation.Updating) {
                             if (!drField.isUpdateable()) throwSecurityException(securityMessage);
-                        } else if (op == Operation.Deleting) {
-                            throw new ETLC_Exception('What are you doing here?');
                         } else if (op == Operation.Upserting) {
                             if (!drField.isCreateable()) throwSecurityException(securityMessage + '[Create]');
                             if (!drField.isUpdateable()) throwSecurityException(securityMessage + '[Update]');
@@ -253,6 +261,7 @@ public with sharing class ETLC_SecuredDB {
                 findFieldsRecursive_Method01(mapFields, (Map<String, Object>) child);
             }
         } else {
+            // Can't force in testing...
             System.debug(record);
             throw new ETLC_Exception('Why not?');
         }
@@ -295,12 +304,8 @@ public with sharing class ETLC_SecuredDB {
     
     // Security exception thrower
     private static void throwSecurityException(String message) {
-        if (Test.isRunningTest()) {
-            throw new ETLC_Exception(message);
-        } else {
-            // Security messages must be very vague!
-            throw new System.NoAccessException();
-        }
-        
+        // Security messages must be very vague!
+        if (!Test.isRunningTest()) throw new System.NoAccessException();
+        if (Test.isRunningTest())  throw new ETLC_Exception(message);
     }
 }
